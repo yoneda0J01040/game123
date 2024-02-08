@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>タイピングゲーム</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  #game-container {
+    margin-top: 50px;
+  }
+  #word-display {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  #input-box {
+    font-size: 18px;
+    padding: 5px;
+    margin-bottom: 20px;
+  }
+  #result {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  #score {
+    font-size: 20px;
+  }
+  #keyboard-container {
+    margin-top: 20px;
+  }
+  .key {
+    display: inline-block;
+    width: 60px; /* キーボードの幅を変更 */
+    height: 60px; /* キーボードの高さを変更 */
+    margin: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    line-height: 60px;
+    text-align: center;
+    font-size: 24px; /* 文字サイズを変更 */
+  }
+  .key:hover {
+    background-color: lightblue;
+  }
+  .active-key {
+    background-color: lightblue !important;
+  }
+</style>
+</head>
+<body>
+<h1>タイピングゲーム</h1>
+<div id="game-container">
+  <div id="word-display"></div>
+  <input type="text" id="input-box" placeholder="ここに入力してください">
+  <div id="result"></div>
+  <div id="score">スコア: 0</div>
+</div>
+<div id="keyboard-container">
+  <div class="key" id="key-q">q</div>
+  <div class="key" id="key-w">w</div>
+  <div class="key" id="key-e">e</div>
+  <div class="key" id="key-r">r</div>
+  <div class="key" id="key-t">t</div>
+  <div class="key" id="key-y">y</div>
+  <div class="key" id="key-u">u</div>
+  <div class="key" id="key-i">i</div>
+  <div class="key" id="key-o">o</div>
+  <div class="key" id="key-p">p</div>
+  <br>
+  <div class="key" id="key-a">a</div>
+  <div class="key" id="key-s">s</div>
+  <div class="key" id="key-d">d</div>
+  <div class="key" id="key-f">f</div>
+  <div class="key" id="key-g">g</div>
+  <div class="key" id="key-h">h</div>
+  <div class="key" id="key-j">j</div>
+  <div class="key" id="key-k">k</div>
+  <div class="key" id="key-l">l</div>
+  <br>
+  <div class="key" id="key-z">z</div>
+  <div class="key" id="key-x">x</div>
+  <div class="key" id="key-c">c</div>
+  <div class="key" id="key-v">v</div>
+  <div class="key" id="key-b">b</div>
+  <div class="key" id="key-n">n</div>
+  <div class="key" id="key-m">m</div>
+</div>
+
+<script>
+const words = ['apple', 'banana', 'orange', 'grape', 'watermelon', 'pineapple', 'strawberry', 'kiwi', 'melon', 'peach',
+               'cat', 'dog', 'bird', 'elephant', 'tiger', 'lion', 'monkey', 'snake', 'rabbit', 'hamster',
+               'car', 'bike', 'train', 'plane', 'boat', 'truck', 'bus', 'motorcycle', 'helicopter', 'rocket',
+               'sun', 'moon', 'star', 'cloud', 'rain', 'snow', 'wind', 'storm', 'thunder', 'lightning',
+               'computer', 'phone', 'tablet', 'keyboard', 'mouse', 'monitor', 'printer', 'camera', 'speaker', 'microphone'];
+let currentWordIndex = 0;
+let score = 0;
+
+// 単語表示を更新する関数
+function updateWordDisplay() {
+  document.getElementById('word-display').textContent = words[currentWordIndex];
+}
+
+// スコアを更新する関数
+function updateScore() {
+  document.getElementById('score').textContent = `スコア: ${score}`;
+}
+
+// ゲーム開始時の初期化
+function initializeGame() {
+  currentWordIndex = 0;
+  score = 0;
+  updateWordDisplay();
+  updateScore();
+  document.getElementById('input-box').value = '';
+  document.getElementById('result').textContent = '';
+  document.getElementById('input-box').focus();
+}
+
+// ゲーム終了時の処理
+function endGame() {
+  document.getElementById('result').textContent = 'クリア！おめでとうございます！';
+  document.getElementById('input-box').disabled = true;
+}
+
+// 入力ボックスでEnterキーが押されたときの処理
+document.getElementById('input-box').addEventListener('keypress', function(event) {
+  if (event.key === 'Enter') {
+    const inputText = document.getElementById('input-box').value.trim();
+    const currentWord = words[currentWordIndex];
+    if (inputText === currentWord) {
+      score++;
+      updateScore();
+      currentWordIndex++;
+      if (score >= 15) {
+        endGame();
+      } else if (currentWordIndex < words.length) {
+        updateWordDisplay();
+        document.getElementById('input-box').value = '';
+      }
+      document.getElementById('result').textContent = '正解！次の単語を入力してください';
+    } else {
+      score--;
+      updateScore();
+      document.getElementById('result').textContent = 'ミス！もう一度入力してください';
+    }
+  }
+});
+
+// キーボードのイベントを処理して、入力されたキーの色を変更する
+document.addEventListener('keydown', function(event) {
+  const key = event.key.toLowerCase();
+  if (document.getElementById(`key-${key}`)) {
+    document.getElementById(`key-${key}`).classList.add('active-key');
+  }
+});
+
+document.addEventListener('keyup', function(event) {
+  const key = event.key.toLowerCase();
+  if (document.getElementById(`key-${key}`)) {
+    document.getElementById(`key-${key}`).classList.remove('active-key');
+  }
+});
+
+// ページ読み込み時の初期化
+document.addEventListener('DOMContentLoaded', function() {
+  initializeGame();
+});
+</script>
+</body>
+</html>
